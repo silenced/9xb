@@ -110,11 +110,15 @@ class Role
      * @param (int) ($id) if of the role to be deleted
      * @return void
      */
-    public static function delete($id)
+    public function delete()
     {
         $db = Db::getInstance();
         // we make sure $id is an integer
-        $id  = intval($id);
+        $id  = intval($this->id);
+        // delete users associated to the role
+        foreach ($this->users() as $user) {
+            $user->delete();
+        }
         $req = $db->prepare('DELETE FROM Roles WHERE id = :id');
         // the query was prepared, now we replace :id with our actual $id value
         $req->execute(array('id' => $id));
@@ -129,6 +133,18 @@ class Role
      */
     public function users()
     {
+        $db = Db::getInstance();
+        // we make sure $id is an integer
+        $id = intval($this->id);
+        $req = $db->prepare('SELECT * FROM Users WHERE role_id = :id');
+        // the query was prepared, now we replace :id with our actual $id value
+        $req->execute(array('id' => $id));
 
+        // we create a list of User objects from the database results
+        foreach ($req->fetchAll() as $user) {
+            $list[] = new User($user['id'], $user['first_name'], $user['last_name'], $user['email'], $user['role_id']);
+        }
+
+        return $list;
     }
 }

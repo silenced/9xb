@@ -4,7 +4,7 @@
   </head>
   <body>
     <header>
-      <a href='<?=SITE_URL;?>/'>Home</a>
+      <a href='<?=SITE_URL;?>'>Home</a>
       <a href='?controller=roles&action=index'>Roles</a>
     </header>
 

@@ -56,7 +56,8 @@ class RolesController
      */
     public function store()
     {
-        $name = test_name($_REQUEST['name']);
+        csrfCheck(); // helpers.php
+        $name        = test_name($_REQUEST['name']);
         $description = test_input($_REQUEST['description']);
         if ($name) {
             $params = array(
@@ -78,6 +79,7 @@ class RolesController
      */
     public function update()
     {
+        csrfCheck(); // helpers.php
         $id          = intval($_REQUEST['id']);
         $name        = test_name($_REQUEST['name']);
         $description = test_input($_REQUEST['description']);
@@ -103,10 +105,11 @@ class RolesController
      */
     public function delete()
     {
+        csrfCheckGet(); // helpers.php
         if ($_GET['id']) {
             $id = $_GET['id'];
         }
-        $role = Role::delete($id);
+        $role = Role::find($id)->delete();
         header('Location: ' . SITE_URL . '/?controller=roles&action=index');
         die;
     }

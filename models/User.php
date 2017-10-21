@@ -55,7 +55,7 @@ class User
         $req = $db->prepare('SELECT * FROM Users WHERE id = :id');
         // the query was prepared, now we replace :id with our actual $id value
         $req->execute(array('id' => $id));
-        $role = $req->fetch();
+        $user = $req->fetch();
 
         return new User($user['id'], $user['first_name'], $user['last_name'], $user['email'], $user['role_id']);
     }
@@ -70,7 +70,20 @@ class User
      */
     public static function create($params)
     {
+        $db   = Db::getInstance();
+        $stmt = $db->prepare("INSERT INTO Users (first_name, last_name, email, role_id) VALUES (:first_name, :last_name, :email, :role_id)");
+        $stmt->bindParam(':first_name', $first_name);
+        $stmt->bindParam(':last_name', $last_name);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':role_id', $role_id);
 
+        $first_name = $params['first_name'];
+        $last_name  = $params['last_name'];
+        $email      = $params['email'];
+        $role_id    = $params['role_id'];
+        $stmt->execute();
+
+        return $db->lastInsertId();
     }
 
     /**
@@ -83,7 +96,22 @@ class User
      */
     public static function update($params)
     {
+        $db   = Db::getInstance();
+        $stmt = $db->prepare("UPDATE Users SET first_name=:first_name, last_name=:last_name, email=:email, role_id=:role_id WHERE id=:id");
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':first_name', $first_name);
+        $stmt->bindParam(':last_name', $last_name);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':role_id', $role_id);
 
+        $id         = $params['id'];
+        $first_name = $params['first_name'];
+        $last_name  = $params['last_name'];
+        $email      = $params['email'];
+        $role_id    = $params['role_id'];
+        $stmt->execute();
+
+        return $db->lastInsertId();
     }
 
     /**
@@ -94,11 +122,11 @@ class User
      * @param (int) ($id) if of the user to be deleted
      * @return void
      */
-    public static function delete($id)
+    public function delete()
     {
         $db = Db::getInstance();
         // we make sure $id is an integer
-        $id  = intval($id);
+        $id  = intval($this->id);
         $req = $db->prepare('DELETE FROM Users WHERE id = :id');
         // the query was prepared, now we replace :id with our actual $id value
         $req->execute(array('id' => $id));

@@ -12,6 +12,7 @@ function call($controller, $action)
             break;
         case 'roles':
             // we need the model to query the database later in the controller
+            require_once 'models/User.php';
             require_once 'models/Role.php';
             $controller = new RolesController();
             break;
