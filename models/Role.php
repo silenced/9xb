@@ -88,7 +88,18 @@ class Role
      */
     public static function update($params)
     {
+        $db   = Db::getInstance();
+        $stmt = $db->prepare("UPDATE Roles SET name=:name, description=:description WHERE id=:id");
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':description', $description);
 
+        $id          = $params['id'];
+        $name        = $params['name'];
+        $description = $params['description'];
+        $stmt->execute();
+
+        return $db->lastInsertId();
     }
 
     /**

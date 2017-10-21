@@ -24,7 +24,15 @@ class RolesController
      */
     public function show()
     {
+        // we expect a url of form ?controller=roles&action=show&id=x
+        // without an id we just redirect to the error page as we need the role id to find it in the database
+        if (!isset($_GET['id'])) {
+            return call('users', 'error');
+        }
 
+        // we use the given id to get the right role
+        $role = Role::find($_GET['id']);
+        require_once 'views/roles/show.php';
     }
 
     /**
@@ -48,11 +56,15 @@ class RolesController
      */
     public function store()
     {
-        $params = array(
-            'name'        => filter_var($_REQUEST['name'], FILTER_SANITIZE_STRING),
-            'description' => filter_var($_REQUEST['description'], FILTER_SANITIZE_STRING),
-        );
-        $role = Role::create($params);
+        $name = test_name($_REQUEST['name']);
+        $description = test_input($_REQUEST['description']);
+        if ($name) {
+            $params = array(
+                'name'        => $name,
+                'description' => $description,
+            );
+            $role = Role::create($params);
+        }
         header('Location: ' . SITE_URL . '/?controller=roles&action=index');
         die;
     }
@@ -66,7 +78,20 @@ class RolesController
      */
     public function update()
     {
+        $id          = intval($_REQUEST['id']);
+        $name        = test_name($_REQUEST['name']);
+        $description = test_input($_REQUEST['description']);
 
+        if ($name) {
+            $params = array(
+                'id'          => $id,
+                'name'        => $name,
+                'description' => $description,
+            );
+            $role = Role::update($params);
+        }
+        header('Location: ' . SITE_URL . '/?controller=roles&action=index');
+        die;
     }
 
     /**
@@ -78,6 +103,11 @@ class RolesController
      */
     public function delete()
     {
-
+        if ($_GET['id']) {
+            $id = $_GET['id'];
+        }
+        $role = Role::delete($id);
+        header('Location: ' . SITE_URL . '/?controller=roles&action=index');
+        die;
     }
 }
