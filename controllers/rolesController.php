@@ -30,7 +30,7 @@ class RolesController
     /**
      * create()
      *
-     * used by routes to display the create role template 
+     * used by routes to display the create role template
      *
      * @return void
      */
@@ -48,7 +48,13 @@ class RolesController
      */
     public function store()
     {
-
+        $params = array(
+            'name'        => filter_var($_REQUEST['name'], FILTER_SANITIZE_STRING),
+            'description' => filter_var($_REQUEST['description'], FILTER_SANITIZE_STRING),
+        );
+        $role = Role::create($params);
+        header('Location: ' . SITE_URL . '/?controller=roles&action=index');
+        die;
     }
 
     /**

@@ -66,7 +66,16 @@ class Role
      */
     public static function create($params)
     {
+        $db   = Db::getInstance();
+        $stmt = $db->prepare("INSERT INTO Roles (name, description) VALUES (:name, :description)");
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':description', $description);
 
+        $name        = $params['name'];
+        $description = $params['description'];
+        $stmt->execute();
+
+        return $db->lastInsertId();
     }
 
     /**

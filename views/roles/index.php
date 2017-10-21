@@ -1,0 +1,1 @@
+<a href="<?=SITE_URL;?>/?controller=roles&action=create">Create new role</a>
